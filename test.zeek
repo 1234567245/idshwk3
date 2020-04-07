@@ -1,4 +1,4 @@
-global codeTable :table[count] of int =table();
+global count=0;
 
 function to_lower(str)
 {
@@ -6,7 +6,7 @@ function to_lower(str)
 }
 
 
-event http_reply(
+event http_header()
 {
 
 }
