@@ -1,30 +1,66 @@
-global mycount=0;
-global x : table[addr] of string;
-global y :set[string];
-
-event http_resquest(c: connection, version: string, code: count, reason: string)
-{
-
-
-
-}
-
-
-
-event http_header(c: connection, is_orig: bool, name: string, value: string) 
-{
-
-
-
-}
-
-
-
-event zeek_done()
+type UaMsg:record
 
 {
 
-    print x;
-    print " is a proxy";
+    num:int;
+
+    name:set[string];
+
+};
+
+
+
+global srcIP_ua:table[addr] of UaMsg;
+
+
+
+event http_header(c:connection,is_orig:bool,name:string,value:string)
+
+{
+
+    if (name=="USER-AGENT"){
+
+        if (c$id$orig_h in srcIP_ua){
+
+            for (i,j in srcIP_ua){
+
+                if (value !in j$name){
+
+                    add j$name[value];
+
+                    ++srcIP_ua[c$id$orig_h]$num;
+
+                    if (srcIP_ua[c$id$orig_h]$num==4){
+
+                        print fmt("%s is proxy",c$id$orig_h);
+
+                        break;
+
+                    }
+
+                }
+
+            }
+
+            
+
+        }
+
+        else {
+
+            local x:UaMsg;
+
+            x$num=1;
+
+            add x$name[value];
+
+            srcIP_ua[c$id$orig_h]=x;
+
+        }
+
+        
+
+    }
 
 }
+
