@@ -1,21 +1,30 @@
-global count=0;
+global mycount=0;
+global x : table[addr] of string;
+global y :set[string];
 
-function to_lower(str)
+event http_resquest(c: connection, version: string, code: count, reason: string)
 {
+
+
 
 }
 
-event http_resquest()
+
+
+event http_header(c: connection, is_orig: bool, name: string, value: string) 
 {
+
+
 
 }
 
-event http_header()
-{
 
-}
 
 event zeek_done()
+
 {
-    print 
+
+    print x;
+    print " is a proxy";
+
 }
