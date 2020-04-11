@@ -1,8 +1,7 @@
 type UaMsg:record
-
 {
 
-    num:int;
+    mycount:int;
 
     name:set[string];
 
@@ -10,27 +9,25 @@ type UaMsg:record
 
 
 
-global srcIP_ua:table[addr] of UaMsg;
-
+global srcIP:table[addr] of UaMsg;
 
 
 event http_header(c:connection,is_orig:bool,name:string,value:string)
-
 {
 
     if (name=="USER-AGENT"){
 
-        if (c$id$orig_h in srcIP_ua){
+        if (c$id$orig_h in srcIP){
 
-            for (i,j in srcIP_ua){
+            for (i,j in srcIP){
 
                 if (value !in j$name){
 
                     add j$name[value];
 
-                    ++srcIP_ua[c$id$orig_h]$num;
+                    ++srcIP[c$id$orig_h]$mycount;
 
-                    if (srcIP_ua[c$id$orig_h]$num==4){
+                    if (srcIP[c$id$orig_h]$mycount==4){
 
                         print fmt("%s is proxy",c$id$orig_h);
 
@@ -50,11 +47,11 @@ event http_header(c:connection,is_orig:bool,name:string,value:string)
 
             local x:UaMsg;
 
-            x$num=1;
+            x$mycount=1;
 
             add x$name[value];
 
-            srcIP_ua[c$id$orig_h]=x;
+            srcIP[c$id$orig_h]=x;
 
         }
 
@@ -63,4 +60,5 @@ event http_header(c:connection,is_orig:bool,name:string,value:string)
     }
 
 }
+
 
